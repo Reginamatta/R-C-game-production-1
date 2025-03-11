@@ -1,8 +1,9 @@
 import pygame as pg
+import player
 
 WINSIZE = (640, 480)
 WINCENTER = [320, 240]
-GROUND = 320
+GROUND = 420
 NUMSTARS = 150
 
 def main():
@@ -13,8 +14,10 @@ def main():
     black = 20, 20, 20
     screen.fill(black)
     clock = pg.time.Clock()
-    duck = pg.image.load('Images/smolDuck.png')
-    duck_position = (50,50)
+    cloud = pg.image.load('Images/cute-cloud-simple-illustration-for-kids-drawing-png.png')
+    cloud = pg.transform.scale(cloud,(100,100))
+    duck = player.Player((50,50))
+    duck2= player.Player((100,50))
 
     running = True
     while running:
@@ -23,41 +26,38 @@ def main():
             # Keybinds
             if event.type == pg.KEYDOWN:
                 # Jump
-                if event.key == pg.K_SPACE or event.key == pg.K_UP or event.key == pg.K_w:
+                if event.key == pg.K_SPACE:
                     print("duck")
-                    duck_position = player_jump(duck_position)
+                    duck.jump()
+                if  event.key == pg.K_w:
+                    print("duck")
+                    duck2.jump()
             # Check for QUIT event
             if event.type == pg.QUIT:
                 running = False
-        duck_position = move_player(duck_position)
+        duck.move(GROUND)
+        duck2.move(GROUND)
 
         # Draw screen
         screen.fill(white)
-        draw_clouds(screen)
-        screen.blit(duck, duck_position)
+        draw_clouds(screen, cloud, WINCENTER)
+        draw_floor(screen)
+        duck.draw(screen)
+        duck2.draw(screen)
         pg.display.update()
-
-        clock.tick(clock.get_fps())
-        clock.get_time()
+        clock.tick(60)
         
     pg.quit()
 
-### Player movement
-def move_player(duck_position):
-    x,y = duck_position
-    if y < GROUND:
-        y += 5
-    return (x,y)
-
-def player_jump(duck_position):
-    x,y = duck_position
-    return (x,y-70)
-
 ### Drawing
-def draw_clouds(screen: pg.Surface):
-    blue = (0,0,255)
-    rect = pg.Rect(0,-150,640,300)
-    pg.draw.ellipse(screen,blue, rect)
+def draw_clouds(screen: pg.Surface, cloud, cloud_position):
+    screen.blit(cloud, cloud_position)
+
+
+def draw_floor ( screen: pg.Surface):
+    color = (0,0,0)
+    rect = pg.Rect(0,GROUND,WINSIZE[0], WINSIZE[1]- GROUND)
+    pg.draw.rect(screen,color,rect)
 
 
 if __name__ == '__main__':
